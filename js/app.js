@@ -5,10 +5,15 @@
 const app = {
   // just a utility var to remember all the colors
   colors: ['red','green','blue','yellow'],
-
   // this var will contain the sequence said by Simon
   sequence: [],
-
+  // compteur
+  indice: 0,
+  // HTML element needed
+  messageBloc: document.getElementById('message'),
+  playButton: document.getElementById('go'),
+  playground: document.getElementById('playground'),
+  // ------ methods ------ //
   drawCells: function () {
     const playground = document.getElementById('playground');
     for (const color of app.colors) {
@@ -27,10 +32,10 @@ const app = {
     setTimeout( () => {
       document.getElementById(color).style.borderWidth = '0';
     }, 150);
-
   },
 
   newGame: function () {
+    app.indice = 0;
     // start by reseting the sequence 
     app.sequence = [];
     // make it 3 times :
@@ -40,9 +45,9 @@ const app = {
       // add the corresponding color to the sequence
       app.sequence.push( app.colors[random] );
     }
-
     // start the "Simon Says" sequence
     app.simonSays(app.sequence);
+    console.log(app.sequence);
   },
 
   simonSays: function (sequence) {
@@ -53,23 +58,49 @@ const app = {
       setTimeout( app.simonSays, 850, sequence.slice(1));
     }
   },
-
-  init: function () {
-    console.log('init');
-    app.drawCells();
-
-    // listen click on the "go" button
-    document.getElementById('go').addEventListener('click', app.newGame );
-  },
-
-  /** Fin du code fourni. Après, c'est à toi de jouer! */
-
   showMessage: function (message) {
-    document.getElementById('message').innerHTML = message;
+    app.messageBloc.innerHTML = message;
+    app.messageBloc.classList.remove('hidden');
+    app.playButton.classList.add('hidden');
+  },
+  showButton: () => {
+    app.playButton.classList.remove('hidden');
+    app.messageBloc.classList.add('hidden');
+  },
+  nextMove: () => {
+    console.log('next move');
+  },
+  gameOver: () => {
+    alert(`Partie terminée. Votre score est ${app.sequence.length}`);
+    app.showButton();
+    app.sequence = [];
+  },
+  clickPlayer: (e) => {
+    const clickedCellId = e.target.id;
+    app.bumpCell(clickedCellId);
     
+    console.log('clic:', clickedCellId, '/', app.sequence[app.indice]);
+    if (clickedCellId === app.sequence[app.indice] && app.indice + 1 < app.sequence.length) {
+      console.log('bonne couleur');
+      console.log('indice:', app.indice, 'sequence:', app.sequence.length);
+      app.indice++;
+    } else if (clickedCellId === app.sequence[app.indice] && app.indice + 1 === app.sequence.length) {
+      console.log('indice:', app.indice, 'sequence:', app.sequence.length);
+      app.indice = 0;
+      console.log('indice remis à', app.indice);
+      app.nextMove();
+    } else {
+      app.indice = 0;
+      app.gameOver();
+    }
   },
 
+  init: () => {
+    app.drawCells();
+    // listen click on the "go" button
+    app.playButton.addEventListener('click', app.newGame);
+    app.playground.addEventListener('click', app.clickPlayer);
+  },
 };
 
-
-document.addEventListener('domContentLoaded', app.init);
+document.addEventListener('DOMContentLoaded', app.init);
