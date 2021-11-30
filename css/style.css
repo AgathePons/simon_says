@@ -26,8 +26,19 @@ button#go {
   margin: 3vh auto;
   cursor: pointer;
 }
+button#go.hidden {
+  display: none;
+}
 
 div#message {
   text-align: center;
   font-size: 2em;
+}
+
+div#message.hidden {
+  display: none;
+}
+
+.hidden {
+  display: none;
 }

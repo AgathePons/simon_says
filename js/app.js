@@ -48,6 +48,7 @@ const app = {
     // start the "Simon Says" sequence
     app.simonSays(app.sequence);
     console.log(app.sequence);
+    app.showDelayedMessage(1350 * app.sequence.length);
   },
 
   simonSays: function (sequence) {
@@ -57,18 +58,26 @@ const app = {
       // plays the rest of the sequence after a longer pause
       setTimeout( app.simonSays, 850, sequence.slice(1));
     }
+    app.showMessage('Mémorisez la séquence');
   },
   showMessage: function (message) {
-    app.messageBloc.innerHTML = message;
-    app.messageBloc.classList.remove('hidden');
     app.playButton.classList.add('hidden');
+    app.messageBloc.classList.remove('hidden');
+    app.messageBloc.innerHTML = message;
+  },
+  showDelayedMessage: (timeOut) => {
+    window.setTimeout(app.showMessage, timeOut, 'Reproduisez la séquence');
   },
   showButton: () => {
-    app.playButton.classList.remove('hidden');
     app.messageBloc.classList.add('hidden');
+    app.playButton.classList.remove('hidden');
   },
   nextMove: () => {
-    console.log('next move');
+    let random = Math.floor(Math.random()*4);
+    app.sequence.push( app.colors[random] );
+    console.log(app.sequence);
+    app.simonSays(app.sequence);
+    app.showDelayedMessage(500 + 850 * app.sequence.length);
   },
   gameOver: () => {
     alert(`Partie terminée. Votre score est ${app.sequence.length}`);
@@ -82,10 +91,10 @@ const app = {
     console.log('clic:', clickedCellId, '/', app.sequence[app.indice]);
     if (clickedCellId === app.sequence[app.indice] && app.indice + 1 < app.sequence.length) {
       console.log('bonne couleur');
-      console.log('indice:', app.indice, 'sequence:', app.sequence.length);
+      //console.log('indice:', app.indice, 'sequence:', app.sequence.length);
       app.indice++;
     } else if (clickedCellId === app.sequence[app.indice] && app.indice + 1 === app.sequence.length) {
-      console.log('indice:', app.indice, 'sequence:', app.sequence.length);
+      //console.log('indice:', app.indice, 'sequence:', app.sequence.length);
       app.indice = 0;
       console.log('indice remis à', app.indice);
       app.nextMove();
